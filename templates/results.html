@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Query Results</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <h1>Answer</h1>
+  <h2>Question:</h2>
+  <p>{{ question }}</p>
+  <h2>Answer:</h2>
+  <pre style="white-space:pre-wrap; background:#f5f5f5; padding:1em;">{{ answer }}</pre>
+  <h2>Top Matches</h2>
+  {% for text, meta in matches %}
+    <div class="match">
+      <strong>Type:</strong> {{ meta.type }} | <strong>Chunk #</strong> {{ meta.chunk_index }}<br />
+      {% if meta.type == 'image' %}
+        <details>
+          <summary>Image (click to expand)</summary>
+          <img src="data:image/jpeg;base64,{{ meta.original }}" style="max-width:400px;display:block;margin:0.5em 0;" />
+        </details>
+        <strong>Image Summary:</strong>
+        <pre style="white-space:pre-wrap; background:#eef; padding:.5em;">{{ text }}</pre>
+      {% else %}
+        <strong>Summary:</strong>
+        <pre style="white-space:pre-wrap; background:#eef; padding:.5em;">{{ text }}</pre>
+        <details>
+          <summary>Original Text/Table</summary>
+          <pre style="white-space:pre-wrap; background:#fcfcfc; padding:.5em; border:1px solid #ddd;">{{ meta.original }}</pre>
+        </details>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <p><a href="/document/{{ doc_id }}">Back</a></p>
+</body>
+</html>

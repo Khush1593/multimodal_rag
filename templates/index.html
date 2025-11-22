@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Modal RAG System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Multi-Modal RAG System</h1>
+            <p class="subtitle">Upload a PDF and ask questions about its content</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="card">
+                    <h2>Upload PDF Document</h2>
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fileInput" name="file" accept=".pdf" required>
+                            <label for="fileInput" class="file-label">
+                                <span class="file-icon">📁</span>
+                                <span id="fileName">Choose PDF file...</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="uploadBtn">
+                            <span class="btn-text">Upload & Process</span>
+                            <span class="spinner" style="display: none;"></span>
+                        </button>
+                    </form>
+                    <div id="uploadStatus" class="status-message"></div>
+                </div>
+            </section>
+
+            <!-- Question Section -->
+            <section class="question-section" id="questionSection" style="display: none;">
+                <div class="card">
+                    <div class="section-header">
+                        <h2>Ask Questions</h2>
+                        <button class="btn btn-secondary" id="resetBtn">Reset & Upload New PDF</button>
+                    </div>
+                    
+                    <form id="questionForm">
+                        <div class="input-group">
+                            <textarea 
+                                id="questionInput" 
+                                name="question" 
+                                placeholder="Ask a question about the document..."
+                                rows="3"
+                                required
+                            ></textarea>
+                            <button type="submit" class="btn btn-primary" id="askBtn">
+                                <span class="btn-text">Ask Question</span>
+                                <span class="spinner" style="display: none;"></span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Answer Section -->
+                    <div id="answerSection" style="display: none;">
+                        <div class="answer-card">
+                            <h3>Answer</h3>
+                            <div id="answerText" class="answer-text"></div>
+                            
+                            <div class="context-info">
+                                <h4>Context Used</h4>
+                                <div id="contextInfo" class="context-details"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat History -->
+                <div class="card chat-history" id="chatHistory" style="display: none;">
+                    <h3>Chat History</h3>
+                    <div id="chatMessages"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Powered by LangChain, Groq (Llama 3.1), and Google Gemini</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+flask==3.0.0
+werkzeug==3.0.1
+unstructured[all-docs]
+lxml
+chromadb
+tiktoken
+langchain
+langchain-community
+langchain-groq
+langchain-google-genai
+langchain-chroma
+python-dotenv
+pillow==10.0.0
+pdf2image==1.16.3

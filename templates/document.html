@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Document Summary</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <h1>Document Summary</h1>
+  <p>{{ summary }}</p>
+  <h2>Ask a Question</h2>
+  <form action="/query/{{ doc_id }}" method="post">
+    <input type="text" name="question" placeholder="Enter your question" style="width:60%" required />
+    <button type="submit">Search</button>
+  </form>
+  <p><a href="/">Upload another PDF</a></p>
+</body>
+</html>
