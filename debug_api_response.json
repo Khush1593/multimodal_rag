@@ -1,0 +1,1614 @@
+{
+  "document_count": 104,
+  "documents": [
+    {
+      "index": 0,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 1,
+      "has_image_base64": false
+    },
+    {
+      "index": 1,
+      "metadata_keys": [
+        "source",
+        "text_as_html",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "Table",
+      "page_number": 1,
+      "has_image_base64": false
+    },
+    {
+      "index": 2,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 1,
+      "has_image_base64": false
+    },
+    {
+      "index": 3,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 1,
+      "has_image_base64": false
+    },
+    {
+      "index": 4,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 3,
+      "has_image_base64": false
+    },
+    {
+      "index": 5,
+      "metadata_keys": [
+        "source",
+        "text_as_html",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "Table",
+      "page_number": 3,
+      "has_image_base64": false
+    },
+    {
+      "index": 6,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 3,
+      "has_image_base64": false
+    },
+    {
+      "index": 7,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 3,
+      "has_image_base64": false
+    },
+    {
+      "index": 8,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 9,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 10,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 11,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 12,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 13,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 14,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 15,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 16,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 17,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 18,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 19,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 20,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 21,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 22,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 23,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 24,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 25,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 26,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 27,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 28,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 4,
+      "has_image_base64": false
+    },
+    {
+      "index": 29,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 30,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 31,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 32,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 33,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 34,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 35,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 36,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 37,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 38,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 39,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 40,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 41,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 42,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 43,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 44,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 45,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 46,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 47,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 48,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 5,
+      "has_image_base64": false
+    },
+    {
+      "index": 49,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 50,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 51,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 52,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 53,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 54,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 55,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 56,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 57,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 58,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 59,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 60,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 61,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 62,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 63,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 64,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 65,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 66,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 67,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 68,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 69,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 70,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 71,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 6,
+      "has_image_base64": false
+    },
+    {
+      "index": 72,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 73,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 74,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 75,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 76,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 77,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 78,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 79,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 80,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 81,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 82,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 83,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 84,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 7,
+      "has_image_base64": false
+    },
+    {
+      "index": 85,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 8,
+      "has_image_base64": false
+    },
+    {
+      "index": 86,
+      "metadata_keys": [
+        "source",
+        "text_as_html",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "Table",
+      "page_number": 8,
+      "has_image_base64": false
+    },
+    {
+      "index": 87,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "UncategorizedText",
+      "page_number": 8,
+      "has_image_base64": false
+    },
+    {
+      "index": 88,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "UncategorizedText",
+      "page_number": 8,
+      "has_image_base64": false
+    },
+    {
+      "index": 89,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 8,
+      "has_image_base64": false
+    },
+    {
+      "index": 90,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 8,
+      "has_image_base64": false
+    },
+    {
+      "index": 91,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 92,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "parent_id",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 93,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "image_base64",
+        "image_mime_type",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Image",
+      "page_number": 9,
+      "has_image_base64": true,
+      "image_base64_length": 59480,
+      "image_base64_preview": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAx"
+    },
+    {
+      "index": 94,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "image_base64",
+        "image_mime_type",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Image",
+      "page_number": 9,
+      "has_image_base64": true,
+      "image_base64_length": 84308,
+      "image_base64_preview": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAx"
+    },
+    {
+      "index": 95,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 96,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 97,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 98,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 99,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 100,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "NarrativeText",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 101,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Title",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 102,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "PageNumber",
+      "page_number": 9,
+      "has_image_base64": false
+    },
+    {
+      "index": 103,
+      "metadata_keys": [
+        "source",
+        "filetype",
+        "languages",
+        "page_number",
+        "filename",
+        "category",
+        "element_id"
+      ],
+      "category": "Footer",
+      "page_number": 9,
+      "has_image_base64": false
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 flask==3.0.0
 werkzeug==3.0.1
 unstructured[all-docs]
+unstructured-client  # For cloud API processing
+langchain-unstructured  # LangChain integration for Unstructured
 lxml
 chromadb
 tiktoken

@@ -19,6 +19,7 @@ class Config:
     # API Keys
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
     GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
+    UNSTRUCTURED_API_KEY = os.environ.get('UNSTRUCTURED_API_KEY')  # Optional: for cloud PDF processing
     
     # Model configurations
     SUMMARIZATION_MODEL = "llama-3.1-8b-instant"

@@ -7,7 +7,9 @@ import os
 import sys
 from typing import List, Dict, Any
 import uuid
-from base64 import b64decode
+from base64 import b64decode, b64encode
+import json
+import zlib
 
 # Add Poppler to PATH for Windows
 POPPLER_PATH = r"C:\Users\Khush\OneDrive\Desktop\Agile Interview\poppler\poppler-24.08.0\Library\bin"
@@ -15,7 +17,7 @@ if os.path.exists(POPPLER_PATH):
     os.environ["PATH"] = POPPLER_PATH + os.pathsep + os.environ.get("PATH", "")
     print(f"✓ Poppler path added: {POPPLER_PATH}")
 
-from unstructured.partition.pdf import partition_pdf
+from langchain_unstructured import UnstructuredLoader
 from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate
@@ -62,7 +64,6 @@ class CustomMultiVectorRetriever:
         """Make the retriever callable"""
         return self.invoke(query)
 
-
 class RAGProcessor:
     """Main RAG processing class"""
     
@@ -76,6 +77,13 @@ class RAGProcessor:
         self.table_summaries = []
         self.image_summaries = []
         self.retriever = None
+        
+        # Check if Unstructured API key is available
+        self.use_api = bool(os.environ.get('UNSTRUCTURED_API_KEY'))
+        if self.use_api:
+            print("✓ Unstructured API key found - will use cloud processing")
+        else:
+            print("⚠ No Unstructured API key - will use local processing")
         
         # Initialize models
         self._initialize_models()
@@ -121,45 +129,45 @@ class RAGProcessor:
         """
         print(f"Processing PDF: {file_path}")
         
-        # Extract elements from PDF
-        try:
-            self.chunks = partition_pdf(
-                filename=file_path,
-                infer_table_structure=True,
-                strategy="hi_res",
-                extract_image_block_types=["Image"],
-                extract_image_block_to_payload=True,
-                chunking_strategy="by_title",
-                max_characters=10000,
-                combine_text_under_n_chars=2000,
-                new_after_n_chars=6000,
-            )
-        except Exception as e:
-            error_msg = str(e).lower()
-            if 'tesseract' in error_msg:
-                print("\n" + "="*80)
-                print("⚠ ERROR: Tesseract OCR is not installed!")
-                print("="*80)
-                print("\nTo enable full multi-modal processing with images, install Tesseract:")
-                print("\nOption 1 - Using Chocolatey (Recommended):")
-                print("  choco install tesseract")
-                print("\nOption 2 - Manual Installation:")
-                print("  1. Download from: https://github.com/UB-Mannheim/tesseract/wiki")
-                print("  2. Install to: C:\\Program Files\\Tesseract-OCR")
-                print("  3. Add to PATH: C:\\Program Files\\Tesseract-OCR")
-                print("\nOption 3 - Set environment variable:")
-                print("  $env:TESSERACT_CMD = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'")
-                print("\n" + "="*80)
-                print("Falling back to text-only extraction (no images)...")
-                print("="*80 + "\n")
-                
-                # Fallback to basic strategy without OCR and chunking
-                self.chunks = partition_pdf(
-                    filename=file_path,
-                    strategy="auto",
+        # Use UnstructuredLoader with API if available
+        if self.use_api:
+            print("Using Unstructured API for cloud processing...")
+            try:
+                # Get images as base64 in payload - chunking is DISABLED to preserve images
+                loader = UnstructuredLoader(
+                    file_path=file_path,
+                    partition_via_api=True,
+                    api_key=os.environ.get('UNSTRUCTURED_API_KEY'),
+                    strategy="hi_res",
+                    pdf_infer_table_structure=True,
+                    extract_images_in_pdf=True,
+                    extract_image_block_types=["Image"],
+                    extract_image_block_to_payload=True,  # Get base64 in response
+                    # NO chunking - it strips image base64 data
                 )
-            else:
-                raise
+                langchain_docs = loader.load()
+                
+                print(f"Received {len(langchain_docs)} elements from API")
+                
+                # Check for images
+                img_count = sum(1 for doc in langchain_docs if doc.metadata.get('image_base64'))
+                print(f"★ Found {img_count} elements with image_base64")
+                
+                # Convert to unstructured elements format
+                self.chunks = self._convert_langchain_docs_to_elements(langchain_docs)
+                
+                # Manually reduce element count for summarization to avoid rate limits
+                # Group non-image text elements together
+                self.chunks = self._smart_chunk_for_summarization(self.chunks)
+                
+                print("✓ API processing successful")
+            except Exception as e:
+                print(f"⚠ API processing failed: {e}")
+                print("Falling back to local processing...")
+                self.chunks = self._partition_locally(file_path)
+        else:
+            print("Using local processing...")
+            self.chunks = self._partition_locally(file_path)
         
         print(f"Extracted {len(self.chunks)} chunks")
         
@@ -179,31 +187,309 @@ class RAGProcessor:
             'images': len(self.images)
         }
     
+    def _convert_langchain_docs_to_elements(self, langchain_docs: List[Document]) -> List[Any]:
+        """Convert LangChain documents back to element-like objects
+        
+        Args:
+            langchain_docs: List of LangChain Document objects
+            
+        Returns:
+            List of element-like objects compatible with existing processing
+        """
+        print(f"Converting {len(langchain_docs)} LangChain documents to elements...")
+        
+        # Create mock element objects that have the attributes we need
+        class MockElement:
+            def __init__(self, doc: Document):
+                self.text = doc.page_content
+                category = doc.metadata.get('category', 'UncategorizedText')
+                
+                # Create metadata object with proper structure
+                class MetadataObj:
+                    def __init__(self, doc):
+                        self.text_as_html = doc.metadata.get('text_as_html', doc.page_content)
+                        self.page_number = doc.metadata.get('page_number', 1)
+                        self.category = doc.metadata.get('category', 'Text')
+                        self.image_base64 = doc.metadata.get('image_base64')
+                        
+                        # IMPORTANT: Decode orig_elements from base64 + zlib compressed JSON
+                        orig_elements_raw = doc.metadata.get('orig_elements', [])
+                        if isinstance(orig_elements_raw, str):
+                            try:
+                                # Decode base64, decompress zlib, parse JSON
+                                compressed = b64decode(orig_elements_raw)
+                                decompressed = zlib.decompress(compressed)
+                                self.orig_elements = json.loads(decompressed)
+                            except Exception as e:
+                                print(f"Failed to decode orig_elements: {e}")
+                                self.orig_elements = []
+                        else:
+                            self.orig_elements = orig_elements_raw
+                
+                self.metadata = MetadataObj(doc)
+                self._langchain_metadata = doc.metadata
+                self._type_str = category
+            
+            def __repr__(self):
+                return f"<{self._type_str}>"
+        
+        elements = [MockElement(doc) for doc in langchain_docs]
+        
+        # Debug: print what types we got
+        categories = {}
+        for elem in elements:
+            cat = elem.metadata.category
+            categories[cat] = categories.get(cat, 0) + 1
+        print(f"Element categories: {categories}")
+        
+        return elements
+    
+    def _debug_api_response(self, langchain_docs):
+        """Save API response details to JSON for debugging"""
+        if not langchain_docs:
+            return
+        
+        debug_data = {
+            'document_count': len(langchain_docs),
+            'documents': []
+        }
+        
+        image_count = 0
+        for idx, doc in enumerate(langchain_docs):
+            doc_info = {
+                'index': idx,
+                'metadata_keys': list(doc.metadata.keys()),
+                'category': doc.metadata.get('category'),
+                'page_number': doc.metadata.get('page_number'),
+                'has_image_base64': 'image_base64' in doc.metadata
+            }
+            
+            # Check for direct image_base64 in metadata
+            if doc.metadata.get('image_base64'):
+                img_b64 = doc.metadata['image_base64']
+                doc_info['image_base64_length'] = len(img_b64)
+                doc_info['image_base64_preview'] = img_b64[:100]
+                image_count += 1
+                print(f"★ Element {idx}: Has direct image_base64 (length: {len(img_b64)})")
+            
+            debug_data['documents'].append(doc_info)
+        
+        print(f"★ Total elements with image_base64: {image_count}")
+        
+        # Save to JSON file
+        debug_file = 'debug_api_response.json'
+        with open(debug_file, 'w', encoding='utf-8') as f:
+            json.dump(debug_data, f, indent=2)
+        print(f"★★★ Debug data saved to {debug_file} ★★★\n")
+    
+    def _manual_chunk_elements(self, elements):
+        """Manually chunk elements to reduce count while preserving images"""
+        # Don't chunk - just return all elements
+        # Images need to stay separate to be processed correctly
+        # We'll limit summarization calls instead
+        return elements
+    
+    def _smart_chunk_for_summarization(self, elements):
+        """Combine text elements to reduce API calls while keeping images separate"""
+        chunked = []
+        text_buffer = []
+        
+        for elem in elements:
+            category = getattr(elem.metadata, 'category', '')
+            
+            # Keep images and tables separate
+            if category in ['Image', 'Table']:
+                # Flush text buffer first
+                if text_buffer:
+                    # Combine buffered text elements
+                    combined_text = '\n\n'.join([e.text for e in text_buffer if hasattr(e, 'text')])
+                    if combined_text.strip():
+                        # Use first element as base, update text
+                        first_elem = text_buffer[0]
+                        first_elem.text = combined_text
+                        chunked.append(first_elem)
+                    text_buffer = []
+                
+                # Add image/table as-is
+                chunked.append(elem)
+            else:
+                # Buffer text elements
+                text_buffer.append(elem)
+                
+                # Flush buffer every 10 text elements to create chunks
+                if len(text_buffer) >= 10:
+                    combined_text = '\n\n'.join([e.text for e in text_buffer if hasattr(e, 'text')])
+                    if combined_text.strip():
+                        first_elem = text_buffer[0]
+                        first_elem.text = combined_text
+                        chunked.append(first_elem)
+                    text_buffer = []
+        
+        # Flush remaining
+        if text_buffer:
+            combined_text = '\n\n'.join([e.text for e in text_buffer if hasattr(e, 'text')])
+            if combined_text.strip():
+                first_elem = text_buffer[0]
+                first_elem.text = combined_text
+                chunked.append(first_elem)
+        
+        print(f"Smart chunking: {len(elements)} elements → {len(chunked)} chunks")
+        return chunked
+    
+    def _partition_locally(self, file_path: str) -> List[Any]:
+        """Process PDF locally (fallback)
+        
+        Args:
+            file_path: Path to PDF file
+            
+        Returns:
+            List of extracted elements
+        """
+        from unstructured.partition.pdf import partition_pdf
+        
+        try:
+            chunks = partition_pdf(
+                filename=file_path,
+                infer_table_structure=True,
+                strategy="hi_res",
+                extract_image_block_types=["Image"],
+                extract_image_block_to_payload=True,
+                chunking_strategy="by_title",
+                max_characters=10000,
+                combine_text_under_n_chars=2000,
+                new_after_n_chars=6000,
+            )
+        except Exception as e:
+            error_msg = str(e).lower()
+            if 'tesseract' in error_msg:
+                print("\n" + "="*80)
+                print("⚠ WARNING: Tesseract OCR is not installed!")
+                print("="*80)
+                print("\nFalling back to text-only extraction (no images)...")
+                print("To enable images, either:")
+                print("  1. Install Tesseract: choco install tesseract")
+                print("  2. Set UNSTRUCTURED_API_KEY to use cloud processing")
+                print("="*80 + "\n")
+                
+                chunks = partition_pdf(
+                    filename=file_path,
+                    strategy="auto",
+                )
+            else:
+                raise
+        
+        return chunks
+    
     def _separate_elements(self):
         """Separate extracted elements into tables, texts, and images"""
         self.tables = []
         self.texts = []
         
         for chunk in self.chunks:
-            if "Table" in str(type(chunk)):
+            chunk_type = str(type(chunk))
+            category = getattr(chunk.metadata, 'category', 'Unknown')
+            
+            # Check both the type string and the category metadata
+            if "Table" in chunk_type or "Table" in category:
                 self.tables.append(chunk)
-            if "CompositeElement" in str(type(chunk)):
+            elif "CompositeElement" in chunk_type or category in ['Text', 'NarrativeText', 'Title', 'UncategorizedText', 'ListItem']:
+                self.texts.append(chunk)
+            # Treat anything with text content as text element
+            elif hasattr(chunk, 'text') and chunk.text and chunk.text.strip():
                 self.texts.append(chunk)
         
-        # Extract images from CompositeElement objects
-        self.images = self._get_images_base64(self.chunks)
+        # Load images from extracted directory or extract from elements
+        self.images = self._load_images()
         
         print(f"Separated: {len(self.texts)} texts, {len(self.tables)} tables, {len(self.images)} images")
+    
+    def _load_images(self) -> List[str]:
+        """Load images from elements (base64 in metadata)"""
+        images_b64 = []
+        
+        # Extract from elements with image_base64 in metadata
+        for chunk in self.chunks:
+            # Check direct metadata
+            if hasattr(chunk, 'metadata'):
+                img_data = getattr(chunk.metadata, 'image_base64', None)
+                if img_data and self._is_valid_base64_image(img_data):
+                    images_b64.append(img_data)
+                    print(f"Found image in element metadata (length: {len(img_data)} chars)")
+                    continue
+            
+            # Check LangChain metadata
+            if hasattr(chunk, '_langchain_metadata'):
+                img_data = chunk._langchain_metadata.get('image_base64')
+                if img_data and self._is_valid_base64_image(img_data):
+                    images_b64.append(img_data)
+                    print(f"Found image in LangChain metadata (length: {len(img_data)} chars)")
+        
+        print(f"Total images loaded: {len(images_b64)}")
+        return images_b64
+    
+    def _is_valid_base64_image(self, data: str) -> bool:
+        """Check if string is valid base64 encoded image data"""
+        if not data or len(data) < 100:
+            return False
+        
+        # Check if it looks like base64 (only contains base64 characters)
+        import re
+        if not re.match(r'^[A-Za-z0-9+/=]+$', data[:100]):
+            return False
+        
+        # Try to decode as base64
+        try:
+            decoded = b64decode(data)
+            # Check for common image file signatures
+            # JPEG: FF D8 FF, PNG: 89 50 4E 47, GIF: 47 49 46
+            if decoded[:3] in [b'\xff\xd8\xff', b'\x89\x50\x4e'] or decoded[:3] == b'GIF':
+                return True
+            return False
+        except:
+            return False
     
     def _get_images_base64(self, chunks) -> List[str]:
         """Extract base64 encoded images from chunks"""
         images_b64 = []
         for chunk in chunks:
-            if "CompositeElement" in str(type(chunk)):
-                chunk_els = chunk.metadata.orig_elements
-                for el in chunk_els:
-                    if "Image" in str(type(el)):
-                        images_b64.append(el.metadata.image_base64)
+            # Check if this is an Image element by category
+            if hasattr(chunk, 'metadata'):
+                category = getattr(chunk.metadata, 'category', '')
+                
+                if 'Image' in category:
+                    # This is an image element - check LangChain metadata for image data
+                    if hasattr(chunk, '_langchain_metadata'):
+                        img_data = chunk._langchain_metadata.get('image_base64')
+                        if not img_data and hasattr(chunk, 'text'):
+                            img_data = chunk.text
+                        
+                        if img_data and self._is_valid_base64_image(img_data) and img_data not in images_b64:
+                            images_b64.append(img_data)
+                            print(f"Found image (length: {len(img_data)} chars)")
+            
+            # Check orig_elements (now parsed as list of dicts from JSON)
+            if hasattr(chunk, 'metadata') and hasattr(chunk.metadata, 'orig_elements'):
+                orig_els = chunk.metadata.orig_elements
+                if isinstance(orig_els, list):
+                    for el in orig_els:
+                        # Elements are now dicts from parsed JSON
+                        if isinstance(el, dict):
+                            el_type = el.get('type', '')
+                            if el_type == 'Image':
+                                # Check for image data in metadata
+                                el_metadata = el.get('metadata', {})
+                                img_data = el_metadata.get('image_base64') or el_metadata.get('image_path')
+                                
+                                # Sometimes base64 is in text field
+                                if not img_data:
+                                    img_data = el.get('text', '')
+                                
+                                # Validate it's actually base64 image data
+                                if img_data and self._is_valid_base64_image(img_data) and img_data not in images_b64:
+                                    images_b64.append(img_data)
+                                    print(f"Found embedded image (length: {len(img_data)} chars)")
+        
+        print(f"Total images extracted: {len(images_b64)}")  
         return images_b64
     
     def _generate_summaries(self):
