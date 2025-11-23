@@ -58,7 +58,7 @@ You'll need **THREE** API keys - all have generous free tiers:
 ### Step 1: Clone or navigate to the project directory
 
 ```bash
-cd "c:\Users\Khush\OneDrive\Desktop\Agile Interview"
+cd "c:\Users\A\B\C"
 # Or your project location
 ```
 
