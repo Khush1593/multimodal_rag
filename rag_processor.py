@@ -141,13 +141,24 @@ class RAGProcessor:
                     strategy="hi_res",
                     pdf_infer_table_structure=True,
                     extract_images_in_pdf=True,
-                    extract_image_block_types=["Image"],
+                    extract_image_block_types=["Image", "Table"],
                     extract_image_block_to_payload=True,  # Get base64 in response
-                    # NO chunking - it strips image base64 data
                 )
                 langchain_docs = loader.load()
                 
                 print(f"Received {len(langchain_docs)} elements from API")
+
+                # output_file_path = "./with_chunking_response.json"
+
+                # # Convert LangChain Documents to a list of dictionaries for JSON serialization
+                # # We use doc.model_dump() for easy serialization of the Pydantic v2 Document model
+                # docs_dict_list = [doc.model_dump() for doc in langchain_docs]
+
+                # # Write the list of dictionaries to a JSON file
+                # with open(output_file_path, 'w') as f:
+                #     json.dump(docs_dict_list, f, indent=4)
+
+                # print(f"Successfully saved {len(langchain_docs)} documents to {output_file_path}")
                 
                 # Check for images
                 img_count = sum(1 for doc in langchain_docs if doc.metadata.get('image_base64'))
