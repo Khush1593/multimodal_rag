@@ -18,6 +18,41 @@
             <section class="upload-section" id="uploadSection">
                 <div class="card">
                     <h2>Upload PDF Document</h2>
+                    
+                    {% if not has_env_keys %}
+                    <!-- API Keys Input Section -->
+                    <div class="api-keys-section">
+                        <p class="info-text">🔑 Enter your API keys to use the system:</p>
+                        
+                        <div class="input-group">
+                            <label for="unstructuredKey">Unstructured API Key</label>
+                            <input type="password" id="unstructuredKey" name="unstructured_api_key" 
+                                   placeholder="Get from https://unstructured.io" required>
+                            <small>Free tier: 15,000 pages/month</small>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="groqKey">Groq API Key</label>
+                            <input type="password" id="groqKey" name="groq_api_key" 
+                                   placeholder="Get from https://console.groq.com" required>
+                            <small>Free tier: 30 requests/minute</small>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="googleKey">Google API Key</label>
+                            <input type="password" id="googleKey" name="google_api_key" 
+                                   placeholder="Get from https://aistudio.google.com/app/apikey" required>
+                            <small>Free tier: 1,500 requests/day</small>
+                        </div>
+                        
+                        <div class="info-box">
+                            <p>ℹ️ Your API keys are never stored. They are only used for processing your document.</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="info-text">✓ Using server-configured API keys</p>
+                    {% endif %}
+                    
                     <form id="uploadForm" enctype="multipart/form-data">
                         <div class="file-input-wrapper">
                             <input type="file" id="fileInput" name="file" accept=".pdf" required>

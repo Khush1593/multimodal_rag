@@ -7,15 +7,9 @@ import os
 import sys
 from typing import List, Dict, Any
 import uuid
-from base64 import b64decode, b64encode
+from base64 import b64decode
 import json
 import zlib
-
-# Add Poppler to PATH for Windows
-POPPLER_PATH = r"C:\Users\Khush\OneDrive\Desktop\Agile Interview\poppler\poppler-24.08.0\Library\bin"
-if os.path.exists(POPPLER_PATH):
-    os.environ["PATH"] = POPPLER_PATH + os.pathsep + os.environ.get("PATH", "")
-    print(f"✓ Poppler path added: {POPPLER_PATH}")
 
 from langchain_unstructured import UnstructuredLoader
 from langchain_groq import ChatGroq
@@ -67,8 +61,8 @@ class CustomMultiVectorRetriever:
 class RAGProcessor:
     """Main RAG processing class"""
     
-    def __init__(self):
-        """Initialize the RAG processor"""
+    def __init__(self, unstructured_api_key=None, groq_api_key=None, google_api_key=None):
+        """Initialize the RAG processor with optional API keys"""
         self.chunks = None
         self.texts = []
         self.tables = []
@@ -78,43 +72,51 @@ class RAGProcessor:
         self.image_summaries = []
         self.retriever = None
         
-        # Check if Unstructured API key is available
-        self.use_api = bool(os.environ.get('UNSTRUCTURED_API_KEY'))
-        if self.use_api:
-            print("✓ Unstructured API key found - will use cloud processing")
-        else:
-            print("⚠ No Unstructured API key - will use local processing")
+        # Store API keys (from parameters or environment)
+        self.unstructured_api_key = unstructured_api_key or os.environ.get('UNSTRUCTURED_API_KEY')
+        self.groq_api_key = groq_api_key or os.environ.get('GROQ_API_KEY')
+        self.google_api_key = google_api_key or os.environ.get('GOOGLE_API_KEY')
         
-        # Initialize models
+        # Check if Unstructured API key is available
+        if not self.unstructured_api_key:
+            raise ValueError("UNSTRUCTURED_API_KEY is required for cloud processing")
+        
+        print("✓ Unstructured API key provided - using cloud processing")
+        
+        # Initialize models with provided keys
         self._initialize_models()
     
     def _initialize_models(self):
-        """Initialize LLM models and embeddings"""
+        """Initialize LLM models and embeddings with provided API keys"""
         # Check for required API keys
-        if not os.environ.get('GROQ_API_KEY'):
-            raise ValueError("GROQ_API_KEY environment variable not set")
-        if not os.environ.get('GOOGLE_API_KEY'):
-            raise ValueError("GOOGLE_API_KEY environment variable not set")
+        if not self.groq_api_key:
+            raise ValueError("GROQ_API_KEY is required")
+        if not self.google_api_key:
+            raise ValueError("GOOGLE_API_KEY is required")
         
         # Initialize summarization model (Groq)
         self.summarization_model = ChatGroq(
             temperature=0.5, 
-            model="llama-3.1-8b-instant"
+            model="llama-3.1-8b-instant",
+            api_key=self.groq_api_key
         )
         
         # Initialize image description model (Google)
         self.image_model = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash"
+            model="gemini-2.5-flash",
+            google_api_key=self.google_api_key
         )
         
         # Initialize QA model (Google)
         self.qa_model = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash"
+            model="gemini-2.5-flash",
+            google_api_key=self.google_api_key
         )
         
         # Initialize embeddings (Google)
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/gemini-embedding-001"
+            model="models/gemini-embedding-001",
+            google_api_key=self.google_api_key
         )
     
     def process_pdf(self, file_path: str) -> Dict[str, int]:
@@ -129,56 +131,39 @@ class RAGProcessor:
         """
         print(f"Processing PDF: {file_path}")
         
-        # Use UnstructuredLoader with API if available
-        if self.use_api:
-            print("Using Unstructured API for cloud processing...")
-            try:
-                # Get images as base64 in payload - chunking is DISABLED to preserve images
-                loader = UnstructuredLoader(
-                    file_path=file_path,
-                    partition_via_api=True,
-                    api_key=os.environ.get('UNSTRUCTURED_API_KEY'),
-                    strategy="hi_res",
-                    pdf_infer_table_structure=True,
-                    extract_images_in_pdf=True,
-                    extract_image_block_types=["Image", "Table"],
-                    extract_image_block_to_payload=True,  # Get base64 in response
-                )
-                langchain_docs = loader.load()
-                
-                print(f"Received {len(langchain_docs)} elements from API")
-
-                # output_file_path = "./with_chunking_response.json"
-
-                # # Convert LangChain Documents to a list of dictionaries for JSON serialization
-                # # We use doc.model_dump() for easy serialization of the Pydantic v2 Document model
-                # docs_dict_list = [doc.model_dump() for doc in langchain_docs]
-
-                # # Write the list of dictionaries to a JSON file
-                # with open(output_file_path, 'w') as f:
-                #     json.dump(docs_dict_list, f, indent=4)
-
-                # print(f"Successfully saved {len(langchain_docs)} documents to {output_file_path}")
-                
-                # Check for images
-                img_count = sum(1 for doc in langchain_docs if doc.metadata.get('image_base64'))
-                print(f"★ Found {img_count} elements with image_base64")
-                
-                # Convert to unstructured elements format
-                self.chunks = self._convert_langchain_docs_to_elements(langchain_docs)
-                
-                # Manually reduce element count for summarization to avoid rate limits
-                # Group non-image text elements together
-                self.chunks = self._smart_chunk_for_summarization(self.chunks)
-                
-                print("✓ API processing successful")
-            except Exception as e:
-                print(f"⚠ API processing failed: {e}")
-                print("Falling back to local processing...")
-                self.chunks = self._partition_locally(file_path)
-        else:
-            print("Using local processing...")
-            self.chunks = self._partition_locally(file_path)
+        # Process with Unstructured API
+        print("Using Unstructured API for cloud processing...")
+        try:
+            # Get images as base64 in payload - chunking is DISABLED to preserve images
+            loader = UnstructuredLoader(
+                file_path=file_path,
+                partition_via_api=True,
+                api_key=self.unstructured_api_key,
+                strategy="hi_res",
+                pdf_infer_table_structure=True,
+                extract_images_in_pdf=True,
+                extract_image_block_types=["Image", "Table"],
+                extract_image_block_to_payload=True,  # Get base64 in response
+            )
+            langchain_docs = loader.load()
+            
+            print(f"Received {len(langchain_docs)} elements from API")
+            
+            # Check for images
+            img_count = sum(1 for doc in langchain_docs if doc.metadata.get('image_base64'))
+            print(f"★ Found {img_count} elements with image_base64")
+            
+            # Convert to unstructured elements format
+            self.chunks = self._convert_langchain_docs_to_elements(langchain_docs)
+            
+            # Manually reduce element count for summarization to avoid rate limits
+            # Group non-image text elements together
+            self.chunks = self._smart_chunk_for_summarization(self.chunks)
+            
+            print("✓ API processing successful")
+        except Exception as e:
+            print(f"⚠ API processing failed: {e}")
+            raise RuntimeError(f"Failed to process PDF with Unstructured API: {e}")
         
         print(f"Extracted {len(self.chunks)} chunks")
         
@@ -255,51 +240,7 @@ class RAGProcessor:
         
         return elements
     
-    def _debug_api_response(self, langchain_docs):
-        """Save API response details to JSON for debugging"""
-        if not langchain_docs:
-            return
-        
-        debug_data = {
-            'document_count': len(langchain_docs),
-            'documents': []
-        }
-        
-        image_count = 0
-        for idx, doc in enumerate(langchain_docs):
-            doc_info = {
-                'index': idx,
-                'metadata_keys': list(doc.metadata.keys()),
-                'category': doc.metadata.get('category'),
-                'page_number': doc.metadata.get('page_number'),
-                'has_image_base64': 'image_base64' in doc.metadata
-            }
-            
-            # Check for direct image_base64 in metadata
-            if doc.metadata.get('image_base64'):
-                img_b64 = doc.metadata['image_base64']
-                doc_info['image_base64_length'] = len(img_b64)
-                doc_info['image_base64_preview'] = img_b64[:100]
-                image_count += 1
-                print(f"★ Element {idx}: Has direct image_base64 (length: {len(img_b64)})")
-            
-            debug_data['documents'].append(doc_info)
-        
-        print(f"★ Total elements with image_base64: {image_count}")
-        
-        # Save to JSON file
-        debug_file = 'debug_api_response.json'
-        with open(debug_file, 'w', encoding='utf-8') as f:
-            json.dump(debug_data, f, indent=2)
-        print(f"★★★ Debug data saved to {debug_file} ★★★\n")
-    
-    def _manual_chunk_elements(self, elements):
-        """Manually chunk elements to reduce count while preserving images"""
-        # Don't chunk - just return all elements
-        # Images need to stay separate to be processed correctly
-        # We'll limit summarization calls instead
-        return elements
-    
+
     def _smart_chunk_for_summarization(self, elements):
         """Combine text elements to reduce API calls while keeping images separate"""
         chunked = []
@@ -347,50 +288,7 @@ class RAGProcessor:
         print(f"Smart chunking: {len(elements)} elements → {len(chunked)} chunks")
         return chunked
     
-    def _partition_locally(self, file_path: str) -> List[Any]:
-        """Process PDF locally (fallback)
-        
-        Args:
-            file_path: Path to PDF file
-            
-        Returns:
-            List of extracted elements
-        """
-        from unstructured.partition.pdf import partition_pdf
-        
-        try:
-            chunks = partition_pdf(
-                filename=file_path,
-                infer_table_structure=True,
-                strategy="hi_res",
-                extract_image_block_types=["Image"],
-                extract_image_block_to_payload=True,
-                chunking_strategy="by_title",
-                max_characters=10000,
-                combine_text_under_n_chars=2000,
-                new_after_n_chars=6000,
-            )
-        except Exception as e:
-            error_msg = str(e).lower()
-            if 'tesseract' in error_msg:
-                print("\n" + "="*80)
-                print("⚠ WARNING: Tesseract OCR is not installed!")
-                print("="*80)
-                print("\nFalling back to text-only extraction (no images)...")
-                print("To enable images, either:")
-                print("  1. Install Tesseract: choco install tesseract")
-                print("  2. Set UNSTRUCTURED_API_KEY to use cloud processing")
-                print("="*80 + "\n")
-                
-                chunks = partition_pdf(
-                    filename=file_path,
-                    strategy="auto",
-                )
-            else:
-                raise
-        
-        return chunks
-    
+
     def _separate_elements(self):
         """Separate extracted elements into tables, texts, and images"""
         self.tables = []
@@ -458,50 +356,6 @@ class RAGProcessor:
             return False
         except:
             return False
-    
-    def _get_images_base64(self, chunks) -> List[str]:
-        """Extract base64 encoded images from chunks"""
-        images_b64 = []
-        for chunk in chunks:
-            # Check if this is an Image element by category
-            if hasattr(chunk, 'metadata'):
-                category = getattr(chunk.metadata, 'category', '')
-                
-                if 'Image' in category:
-                    # This is an image element - check LangChain metadata for image data
-                    if hasattr(chunk, '_langchain_metadata'):
-                        img_data = chunk._langchain_metadata.get('image_base64')
-                        if not img_data and hasattr(chunk, 'text'):
-                            img_data = chunk.text
-                        
-                        if img_data and self._is_valid_base64_image(img_data) and img_data not in images_b64:
-                            images_b64.append(img_data)
-                            print(f"Found image (length: {len(img_data)} chars)")
-            
-            # Check orig_elements (now parsed as list of dicts from JSON)
-            if hasattr(chunk, 'metadata') and hasattr(chunk.metadata, 'orig_elements'):
-                orig_els = chunk.metadata.orig_elements
-                if isinstance(orig_els, list):
-                    for el in orig_els:
-                        # Elements are now dicts from parsed JSON
-                        if isinstance(el, dict):
-                            el_type = el.get('type', '')
-                            if el_type == 'Image':
-                                # Check for image data in metadata
-                                el_metadata = el.get('metadata', {})
-                                img_data = el_metadata.get('image_base64') or el_metadata.get('image_path')
-                                
-                                # Sometimes base64 is in text field
-                                if not img_data:
-                                    img_data = el.get('text', '')
-                                
-                                # Validate it's actually base64 image data
-                                if img_data and self._is_valid_base64_image(img_data) and img_data not in images_b64:
-                                    images_b64.append(img_data)
-                                    print(f"Found embedded image (length: {len(img_data)} chars)")
-        
-        print(f"Total images extracted: {len(images_b64)}")  
-        return images_b64
     
     def _generate_summaries(self):
         """Generate summaries for texts, tables, and images"""

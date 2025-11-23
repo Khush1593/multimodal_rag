@@ -8,9 +8,11 @@ __pycache__/
 venv/
 env/
 ENV/
+venv_new/
 
 # Environment variables
 .env
+.env.example
 
 # Uploaded files
 uploads/
@@ -64,3 +66,5 @@ wheels/
 .pytest_cache/
 .coverage
 htmlcov/
+
+khush (1).ipynb

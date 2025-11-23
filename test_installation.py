@@ -27,23 +27,23 @@ def check_python_version():
 
 def check_imports():
     """Check if required packages are installed"""
-    required_packages = [
-        'flask',
-        'langchain',
-        'langchain_groq',
-        'langchain_google_genai',
-        'chromadb',
-        'unstructured',
-        'PIL',
-    ]
+    required_packages = {
+        'flask': 'Flask web framework',
+        'langchain_unstructured': 'LangChain Unstructured integration',
+        'langchain_groq': 'LangChain Groq integration',
+        'langchain_google_genai': 'LangChain Google Gemini integration',
+        'langchain_chroma': 'LangChain ChromaDB integration',
+        'langchain_core': 'LangChain core library',
+        'chromadb': 'ChromaDB vector store'
+    }
     
     all_ok = True
-    for package in required_packages:
+    for package, description in required_packages.items():
         try:
             __import__(package)
-            print_status(f"Package '{package}' installed", "OK")
+            print_status(f"Package '{package}' installed ({description})", "OK")
         except ImportError:
-            print_status(f"Package '{package}' NOT installed", "ERROR")
+            print_status(f"Package '{package}' NOT installed - {description}", "ERROR")
             all_ok = False
     
     return all_ok
@@ -52,6 +52,10 @@ def check_env_file():
     """Check if .env file exists and has required keys"""
     if not os.path.exists('.env'):
         print_status(".env file NOT found", "ERROR")
+        print("  Create a .env file with your API keys:")
+        print("  UNSTRUCTURED_API_KEY=your_key")
+        print("  GROQ_API_KEY=your_key")
+        print("  GOOGLE_API_KEY=your_key")
         return False
     
     print_status(".env file found", "OK")
@@ -60,23 +64,32 @@ def check_env_file():
     with open('.env', 'r') as f:
         content = f.read()
     
-    required_keys = ['GROQ_API_KEY', 'GOOGLE_API_KEY']
+    required_keys = {
+        'UNSTRUCTURED_API_KEY': 'https://unstructured.io',
+        'GROQ_API_KEY': 'https://console.groq.com',
+        'GOOGLE_API_KEY': 'https://aistudio.google.com/app/apikey'
+    }
+    
     all_ok = True
     
-    for key in required_keys:
+    for key, url in required_keys.items():
         if key in content:
             # Check if value is set (not empty)
             for line in content.split('\n'):
                 if line.startswith(key):
-                    value = line.split('=', 1)[1].strip()
-                    if value and value != 'your_groq_api_key_here' and value != 'your_google_api_key_here':
+                    value = line.split('=', 1)[1].strip() if '=' in line else ''
+                    placeholder_values = ['your_key', 'your_api_key_here', 'your_unstructured_api_key_here', 
+                                        'your_groq_api_key_here', 'your_google_api_key_here']
+                    if value and value not in placeholder_values:
                         print_status(f"{key} is set", "OK")
                     else:
-                        print_status(f"{key} is NOT set (empty or default value)", "WARN")
+                        print_status(f"{key} is NOT set (empty or default value)", "ERROR")
+                        print(f"  Get your key from: {url}")
                         all_ok = False
                     break
         else:
             print_status(f"{key} NOT found in .env", "ERROR")
+            print(f"  Get your key from: {url}")
             all_ok = False
     
     return all_ok
@@ -103,88 +116,133 @@ def check_directories():
 
 def check_files():
     """Check if required files exist"""
-    files = [
-        'app.py',
-        'rag_processor.py',
-        'config.py',
-        'requirements.txt',
-        'templates/index.html',
-        'static/css/style.css',
-        'static/js/main.js'
-    ]
+    files = {
+        'app.py': 'Main Flask application',
+        'rag_processor.py': 'RAG processing logic',
+        'config.py': 'Configuration settings',
+        'requirements.txt': 'Python dependencies',
+        'templates/index.html': 'Main HTML template',
+        'static/css/style.css': 'CSS styles',
+        'static/js/main.js': 'Frontend JavaScript'
+    }
     
     all_ok = True
-    for file in files:
+    for file, description in files.items():
         if os.path.exists(file):
-            print_status(f"File '{file}' exists", "OK")
+            print_status(f"File '{file}' exists ({description})", "OK")
         else:
-            print_status(f"File '{file}' NOT found", "ERROR")
+            print_status(f"File '{file}' NOT found - {description}", "ERROR")
             all_ok = False
     
     return all_ok
 
-def check_poppler():
-    """Check if Poppler is installed"""
-    import subprocess
-    
-    # First, add local Poppler to PATH if it exists
-    local_poppler = r"C:\Users\Khush\OneDrive\Desktop\Agile Interview\poppler\poppler-24.08.0\Library\bin"
-    if os.path.exists(local_poppler):
-        os.environ["PATH"] = local_poppler + os.pathsep + os.environ.get("PATH", "")
-        print_status(f"Found local Poppler at: {local_poppler}", "OK")
-    
+def check_internet_connection():
+    """Check if internet connection is available"""
+    import socket
     try:
-        result = subprocess.run(['pdfinfo', '-v'], capture_output=True, text=True)
-        if result.returncode == 0:
-            print_status("Poppler is installed and working", "OK")
-            return True
-        else:
-            print_status("Poppler NOT found in PATH", "WARN")
-            return False
-    except FileNotFoundError:
-        print_status("Poppler NOT found", "WARN")
-        print(f"  Local path checked: {local_poppler}")
-        print("  Download from: https://github.com/oschwartz10612/poppler-windows/releases/")
+        # Try to connect to Google DNS
+        socket.create_connection(("8.8.8.8", 53), timeout=3)
+        print_status("Internet connection available", "OK")
+        return True
+    except OSError:
+        print_status("No internet connection detected", "ERROR")
+        print("  Cloud APIs require internet connection!")
         return False
+
+def check_api_accessibility():
+    """Check if API endpoints are accessible"""
+    import urllib.request
+    
+    apis = {
+        'Unstructured API': 'https://api.unstructuredapp.io',
+        'Groq API': 'https://api.groq.com',
+        'Google API': 'https://generativelanguage.googleapis.com'
+    }
+    
+    accessible_count = 0
+    for name, url in apis.items():
+        try:
+            urllib.request.urlopen(url, timeout=5)
+            print_status(f"{name} is reachable", "OK")
+            accessible_count += 1
+        except Exception as e:
+            error_str = str(e)[:60]
+            # 404 errors are actually OK - it means the server is up but requires auth
+            if "404" in error_str or "401" in error_str or "403" in error_str:
+                print_status(f"{name} is reachable (auth required)", "OK")
+                print(f"  Note: {error_str}")
+                accessible_count += 1
+            else:
+                print_status(f"{name} connection check failed", "WARN")
+                print(f"  Note: {error_str}")
+                print(f"  This is OK if you have internet - API will work with valid keys")
+    
+    # Consider it OK if at least one API is reachable
+    return accessible_count > 0
 
 def main():
     """Main test function"""
-    print("=" * 60)
-    print("Multi-Modal RAG Flask App - Installation Verification")
-    print("=" * 60)
+    print("=" * 70)
+    print("Multi-Modal RAG Flask App - Installation Verification (Cloud-Based)")
+    print("=" * 70)
     print()
+    
+    print("📋 Checking Prerequisites...")
+    print("-" * 70)
     
     checks = {
         "Python Version": check_python_version(),
         "Required Packages": check_imports(),
         "Environment File": check_env_file(),
-        "Directories": check_directories(),
-        "Files": check_files(),
-        "Poppler": check_poppler()
+        "Project Directories": check_directories(),
+        "Project Files": check_files(),
+        "Internet Connection": check_internet_connection(),
+        "API Reachability (optional)": check_api_accessibility()
     }
     
     print()
-    print("=" * 60)
-    print("Summary")
-    print("=" * 60)
+    print("=" * 70)
+    print("📊 Summary")
+    print("=" * 70)
     
-    all_passed = all(checks.values())
+    passed = sum(1 for v in checks.values() if v)
+    total = len(checks)
     
-    if all_passed:
-        print("✓ All checks passed! You're ready to run the application.")
+    print(f"\nPassed: {passed}/{total} checks")
+    print()
+    
+    if all(checks.values()):
+        print("✅ All checks passed! You're ready to run the application.")
         print()
-        print("To start the app, run:")
-        print("  python app.py")
+        print("🚀 To start the app, run:")
+        print("   python app.py")
+        print()
+        print("📝 Then open your browser to: http://localhost:5000")
+        print()
+        print("💡 Tips:")
+        print("   - Upload a small PDF first to test (1-5 pages)")
+        print("   - Check console for processing progress")
+        print("   - First upload takes longer (model loading)")
     else:
-        print("⚠ Some checks failed. Please fix the issues above.")
+        print("⚠️  Some checks failed. Please fix the issues above.")
         print()
         failed_checks = [name for name, passed in checks.items() if not passed]
-        print("Failed checks:")
+        print("❌ Failed checks:")
         for check in failed_checks:
-            print(f"  - {check}")
+            print(f"   - {check}")
+        print()
+        print("📖 See README.md for detailed setup instructions")
     
     print()
-    print("=" * 60)
+    print("=" * 70)
+    print()
+    print("ℹ️  Important Notes:")
+    print("   • This application uses cloud APIs only")
+    print("   • No local dependencies (Poppler, Tesseract) required!")
+    print("   • API reachability warnings are normal - APIs work with valid keys")
+    print("   • 404/403 errors on API checks = server is up, just needs authentication")
+    print()
+    print("=" * 70)
 
 if __name__ == '__main__':
     main()

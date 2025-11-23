@@ -47,6 +47,22 @@ uploadForm.addEventListener('submit', async (e) => {
     try {
         const formData = new FormData();
         formData.append('file', file);
+        
+        // Add API keys if they exist in the form (for users without server keys)
+        const unstructuredKey = document.getElementById('unstructuredKey');
+        const groqKey = document.getElementById('groqKey');
+        const googleKey = document.getElementById('googleKey');
+        
+        if (unstructuredKey) {
+            if (!unstructuredKey.value || !groqKey.value || !googleKey.value) {
+                showStatus('❌ Please enter all three API keys', 'error');
+                setLoading(uploadBtn, false);
+                return;
+            }
+            formData.append('unstructured_api_key', unstructuredKey.value);
+            formData.append('groq_api_key', groqKey.value);
+            formData.append('google_api_key', googleKey.value);
+        }
 
         const response = await fetch('/upload', {
             method: 'POST',

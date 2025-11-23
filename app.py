@@ -26,7 +26,13 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     """Render the main page"""
-    return render_template('index.html')
+    # Check if API keys are in environment (optional for deployment)
+    has_env_keys = all([
+        os.environ.get('UNSTRUCTURED_API_KEY'),
+        os.environ.get('GROQ_API_KEY'),
+        os.environ.get('GOOGLE_API_KEY')
+    ])
+    return render_template('index.html', has_env_keys=has_env_keys)
 
 
 @app.route('/upload', methods=['POST'])
@@ -45,6 +51,17 @@ def upload_file():
         if not allowed_file(file.filename):
             return jsonify({'error': 'Invalid file type. Only PDF files are allowed'}), 400
         
+        # Get API keys from request or environment
+        unstructured_key = request.form.get('unstructured_api_key') or os.environ.get('UNSTRUCTURED_API_KEY')
+        groq_key = request.form.get('groq_api_key') or os.environ.get('GROQ_API_KEY')
+        google_key = request.form.get('google_api_key') or os.environ.get('GOOGLE_API_KEY')
+        
+        # Validate API keys
+        if not all([unstructured_key, groq_key, google_key]):
+            return jsonify({
+                'error': 'All three API keys are required (Unstructured, Groq, Google)'
+            }), 400
+        
         # Generate unique session ID
         session_id = str(uuid.uuid4())
         session['session_id'] = session_id
@@ -54,11 +71,22 @@ def upload_file():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"{session_id}_{filename}")
         file.save(filepath)
         
-        # Initialize RAG processor
-        rag_processor = RAGProcessor()
+        # Initialize RAG processor with user's API keys
+        rag_processor = RAGProcessor(
+            unstructured_api_key=unstructured_key,
+            groq_api_key=groq_key,
+            google_api_key=google_key
+        )
         
         # Process the PDF
         result = rag_processor.process_pdf(filepath)
+        
+        # Delete the PDF file after processing to save storage
+        try:
+            os.remove(filepath)
+            print(f"✓ Deleted uploaded file: {filepath}")
+        except Exception as e:
+            print(f"⚠ Could not delete file {filepath}: {e}")
         
         # Store processor for this session
         rag_processors[session_id] = rag_processor
