@@ -5,6 +5,8 @@ Handles PDF processing, summarization, and question answering
 
 import os
 import sys
+import time
+import random
 from typing import List, Dict, Any
 import uuid
 from base64 import b64decode
@@ -357,10 +359,56 @@ class RAGProcessor:
         except:
             return False
     
+    # Groq free-tier-friendly batching parameters.
+    # Free tier: ~30 RPM for llama-3.1-8b-instant. Batch=5 with 15s delay → ~20 RPM.
+    GROQ_BATCH_SIZE = 5
+    GROQ_BATCH_DELAY_SECONDS = 15
+    GROQ_MAX_RETRIES = 5
+
+    def _invoke_with_retry(self, chain, payload):
+        """Invoke a chain with exponential backoff on rate-limit / transient errors."""
+        for attempt in range(self.GROQ_MAX_RETRIES):
+            try:
+                return chain.invoke(payload)
+            except Exception as e:
+                err_str = str(e).lower()
+                is_rate_limited = (
+                    "429" in err_str
+                    or "rate limit" in err_str
+                    or "too many requests" in err_str
+                    or "quota" in err_str
+                )
+                if attempt == self.GROQ_MAX_RETRIES - 1:
+                    raise
+                # Exponential backoff with jitter; longer waits for rate limits.
+                base_wait = 30 if is_rate_limited else 2
+                wait_seconds = base_wait * (2 ** attempt) + random.uniform(0, 2)
+                print(f"  ⚠ Request failed ({type(e).__name__}); retrying in {wait_seconds:.1f}s "
+                      f"(attempt {attempt + 1}/{self.GROQ_MAX_RETRIES})")
+                time.sleep(wait_seconds)
+
+    def _batch_summarize(self, chain, items, label):
+        """Run summarization in small batches with a delay between batches to respect Groq rate limits."""
+        summaries = []
+        total = len(items)
+        for batch_start in range(0, total, self.GROQ_BATCH_SIZE):
+            batch = items[batch_start:batch_start + self.GROQ_BATCH_SIZE]
+            batch_num = batch_start // self.GROQ_BATCH_SIZE + 1
+            total_batches = (total + self.GROQ_BATCH_SIZE - 1) // self.GROQ_BATCH_SIZE
+            print(f"  Summarizing {label} batch {batch_num}/{total_batches} "
+                  f"({len(batch)} items)")
+            for item in batch:
+                summaries.append(self._invoke_with_retry(chain, item))
+            # Pause between batches (but not after the last one) to stay under RPM limit.
+            if batch_start + self.GROQ_BATCH_SIZE < total:
+                print(f"  ⏸ Pausing {self.GROQ_BATCH_DELAY_SECONDS}s to respect Groq rate limit...")
+                time.sleep(self.GROQ_BATCH_DELAY_SECONDS)
+        return summaries
+
     def _generate_summaries(self):
         """Generate summaries for texts, tables, and images"""
         print("Generating summaries...")
-        
+
         # Text and table summaries
         prompt_text = """
 You are an assistant tasked with summarizing tables and text.
@@ -374,18 +422,23 @@ Table or text chunk: {element}
 """
         prompt = ChatPromptTemplate.from_template(prompt_text)
         summarize_chain = {"element": lambda x: x} | prompt | self.summarization_model | StrOutputParser()
-        
-        # Summarize texts
+
+        # Summarize texts (batched with delays to avoid Groq rate limits)
         if self.texts:
-            self.text_summaries = summarize_chain.batch(self.texts, {"max_concurrency": 3})
+            self.text_summaries = self._batch_summarize(summarize_chain, self.texts, "text")
             print(f"Generated {len(self.text_summaries)} text summaries")
-        
+
+        # Pause before tables so we don't immediately re-burst into Groq.
+        if self.texts and self.tables:
+            print(f"⏸ Pausing {self.GROQ_BATCH_DELAY_SECONDS}s before processing tables...")
+            time.sleep(self.GROQ_BATCH_DELAY_SECONDS)
+
         # Summarize tables
         if self.tables:
             tables_html = [table.metadata.text_as_html for table in self.tables]
-            self.table_summaries = summarize_chain.batch(tables_html, {"max_concurrency": 3})
+            self.table_summaries = self._batch_summarize(summarize_chain, tables_html, "table")
             print(f"Generated {len(self.table_summaries)} table summaries")
-        
+
         # Image summaries
         if self.images:
             self._generate_image_summaries()
@@ -394,7 +447,7 @@ Table or text chunk: {element}
         """Generate summaries for images using multimodal model"""
         prompt_template = """Describe the image in detail. For context,
 the image is part of a document. Be specific about graphs, charts, diagrams, and any text visible in the image."""
-        
+
         messages = [
             (
                 "user",
@@ -407,11 +460,16 @@ the image is part of a document. Be specific about graphs, charts, diagrams, and
                 ],
             )
         ]
-        
+
         prompt = ChatPromptTemplate.from_messages(messages)
         chain = prompt | self.image_model | StrOutputParser()
-        
-        self.image_summaries = chain.batch(self.images)
+
+        # Run sequentially with retry to be safe against image-model rate limits.
+        self.image_summaries = []
+        total = len(self.images)
+        for idx, image in enumerate(self.images, start=1):
+            print(f"  Summarizing image {idx}/{total}")
+            self.image_summaries.append(self._invoke_with_retry(chain, {"image": image}))
         print(f"Generated {len(self.image_summaries)} image summaries")
     
     def _create_vectorstore(self):
